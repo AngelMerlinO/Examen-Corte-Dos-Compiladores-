@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador Léxico, Sintáctico, Semántico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+>
+
+</head>
+
+<body class="bg-dark text-light">
+    <div class="container my-5">
+        <h2 class="mb-4 text-center">Analizador Léxico, Sintáctico y Semántico</h2>
+        <form method="POST" class="mb-5">
+            <div class="mb-3">
+                <textarea name="code" rows="20" class="form-control bg-secondary text-light" style="width: 100%;">{{ request.form.code if request.method == 'POST' else '' }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Analizar</button>
+        </form>
+
+        <div class="mb-5">
+            <h3 class="mb-3">Análisis Sintáctico</h3>
+            <pre class="bg-secondary p-3 rounded">{{ syntax_result }}</pre>
+        </div>
+
+        <div class="mb-5">
+            <h3 class="mb-3">Análisis Léxico</h3>
+            <table class="table table-bordered table-dark">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Palabra reservada</th>
+                        <th>Identificador</th>
+                        <th>Número</th>
+                        <th>Símbolo</th>
+                        <th>Paréntesis izquierdo</th>
+                        <th>Paréntesis Derecho</th>
+                        <th>Llave izquierda</th>
+                        <th>Llave Derecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in tokens %}
+                    <tr>
+                        <td>{{ token.value }}</td>
+                        <td>{{ 'X' if token.type in ['FOR', 'VAR', 'CONSOLE', 'LOG', 'GLOBAL','INT','SYSTEM','PRINTLN','OUT'] else '' }}</td>
+                        <td>{{ 'X' if token.type == 'ID' else '' }}</td>
+                        <td>{{ 'X' if token.type == 'NUMBER' else '' }}</td>
+                        <td>{{ 'X' if token.type in ['PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'ASSIGN', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE', 'DOT', 'SEMICOLON', 'COMMA', 'SINGLE_QUOTE'] else '' }}</td>
+                        <td>{{ 'X' if token.type == 'LPAREN' else '' }}</td>
+                        <td>{{ 'X' if token.type == 'RPAREN' else '' }}</td>
+                        <td>{{ 'X' if token.type == 'LBRACE' else '' }}</td>
+                        <td>{{ 'X' if token.type == 'RBRACE' else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-5">
+            <h3 class="mb-3">Análisis Semántico</h3>
+            <p class="bg-secondary p-3 rounded">{{ semantic_result }}</p>
+        </div>
+
+        <div class="mb-5">
+            <h3 class="mb-3">Conteo de Elementos</h3>
+            <table class="table table-bordered table-dark">
+                <thead>
+                    <tr>
+                        <th>Palabras reservadas</th>
+                        <th>Identificadores</th>
+                        <th>Números</th>
+                        <th>Símbolos</th>
+                        <th>Paréntesis izquierdos</th>
+                        <th>Paréntesis derechos</th>
+                        <th>Llaves izquierdas</th>
+                        <th>Llaves derechas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ counts.reserved }}</td>
+                        <td>{{ counts.id }}</td>
+                        <td>{{ counts.number }}</td>
+                        <td>{{ counts.symbol }}</td>
+                        <td>{{ counts.lparen }}</td>
+                        <td>{{ counts.rparen }}</td>
+                        <td>{{ counts.lbrace }}</td>
+                        <td>{{ counts.rbrace }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
